@@ -15,6 +15,14 @@
         <jackson.version>2.18.0</jackson.version>
     </properties>
     <dependencies>
+        <!--region 图片压缩输出使用jar-->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.8</version>
+        </dependency>
+        <!--endregion-->
+        
         <!--region jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

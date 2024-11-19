@@ -7,10 +7,19 @@ import java.util.UUID;
  * @author 黑色的小火苗
  */
 public class StringUtils {
+    /**
+     * 获取UUID,去除字符串中的`-`
+     */
     public static String uuid() {
         return UUID.randomUUID().toString().replace("-", "").toUpperCase();
     }
 
+    /**
+     * 将byte数组转换为UTF-8编码的字符串
+     *
+     * @param bytes byte数组
+     * @return String
+     */
     public static String newStringForUtf8(byte[] bytes) {
         return new String(bytes, StandardCharsets.UTF_8);
     }
