@@ -1,4 +1,4 @@
-package org.starlight.util.dto.image;
+package org.starlight.util.image;
 
 import java.io.InputStream;
 import java.util.List;

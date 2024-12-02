@@ -5,6 +5,9 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
+/**
+ * @author 黑色的小火苗
+ */
 public class AESUtil {
 
     private static final String ALGORITHM = "AES";
@@ -17,7 +20,6 @@ public class AESUtil {
      * @param key 密钥
      * @param iv 向量
      * @return 加密后的数据
-     * @throws Exception
      */
     public static String encrypt(String data, String key, String iv) throws Exception {
         Cipher cipher = Cipher.getInstance(TRANSFORMATION);
@@ -34,7 +36,6 @@ public class AESUtil {
      * @param key 密钥
      * @param iv 向量
      * @return 解密后的数据
-     * @throws Exception
      */
     public static String decrypt(String encryptedData, String key, String iv) throws Exception {
         Cipher cipher = Cipher.getInstance(TRANSFORMATION);

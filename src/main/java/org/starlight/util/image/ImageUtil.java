@@ -1,7 +1,6 @@
-package org.starlight.util;
+package org.starlight.util.image;
 
 import net.coobird.thumbnailator.Thumbnails;
-import org.starlight.util.dto.image.*;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

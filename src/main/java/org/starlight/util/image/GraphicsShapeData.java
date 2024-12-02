@@ -1,4 +1,4 @@
-package org.starlight.util.dto.image;
+package org.starlight.util.image;
 
 import org.starlight.util.enums.GraphicsType;
 
