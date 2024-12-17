@@ -15,6 +15,131 @@ import java.util.Iterator;
 import java.util.List;
 
 public class PoiUtil {
+    public static STBorder.Enum BORDER_NONE = STBorder.NONE;
+
+    /**
+     * 整体表格设置文本居中
+     *
+     * @param table
+     */
+    public static void tableSetTextCenter(XWPFTable table) {
+        // 遍历表格中的每个单元格并设置文本居中
+        for (XWPFTableRow row : table.getRows()) {
+            for (XWPFTableCell cell : row.getTableCells()) {
+                // 创建段落
+                List<XWPFParagraph> paragraphs = cell.getParagraphs();
+                XWPFParagraph paragraph = paragraphs.isEmpty() || paragraphs.get(0) == null ? cell.addParagraph() : paragraphs.get(0);
+                // 设置段落对齐方式为水平居中
+                paragraph.setAlignment(ParagraphAlignment.CENTER);
+                // 设置单元格对齐方式为垂直居中
+                cell.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+            }
+        }
+    }
+
+    /**
+     * 设置纸张大小
+     *
+     * @param document doc对象
+     * @param width    宽
+     * @param height   长
+     */
+    public static void setPageSize(XWPFDocument document, double width, double height) {
+        CTSectPr sectPr = document.getDocument().getBody().addNewSectPr();
+        CTPageSz pageSz = sectPr.isSetPgSz() ? sectPr.getPgSz() : sectPr.addNewPgSz();
+        pageSz.setW(cmToTwips(width));
+        pageSz.setH(cmToTwips(height));
+    }
+
+    /**
+     * 将表格边框设置为无边框
+     *
+     * @param table table
+     */
+    public static void removeBorders(XWPFTable table) {
+        CTTblBorders borders = tableGetBorder(table);
+        removeTopBorders(borders);
+        removeBottomBorders(borders);
+        removeLeftBorders(borders);
+        removeRightBorders(borders);
+        removeHBorders(borders);
+        removeVBorders(borders);
+
+    }
+
+    public static void removeHBorders(CTTblBorders borders) {
+        borders.addNewInsideH().setVal(BORDER_NONE);
+    }
+
+    public static void removeVBorders(CTTblBorders borders) {
+        borders.addNewInsideV().setVal(BORDER_NONE);
+    }
+
+    /**
+     * 移除表格左边框线
+     *
+     * @param borders 边框设置
+     */
+    public static void removeLeftBorders(CTTblBorders borders) {
+        CTBorder tBorder = borders.addNewLeft();
+        tBorder.setVal(BORDER_NONE);
+    }
+
+    /**
+     * 移除表格右边框线
+     *
+     * @param borders 边框设置
+     */
+    public static void removeRightBorders(CTTblBorders borders) {
+        CTBorder tBorder = borders.addNewRight();
+        tBorder.setVal(BORDER_NONE);
+    }
+
+
+    /**
+     * 移除表格下边框线
+     *
+     * @param borders 边框设置
+     */
+    public static void removeBottomBorders(CTTblBorders borders) {
+        CTBorder tBorder = borders.addNewBottom();
+        tBorder.setVal(BORDER_NONE);
+    }
+
+    /**
+     * 移除表格上边框线
+     *
+     * @param borders 边框设置
+     */
+    public static void removeTopBorders(CTTblBorders borders) {
+        CTBorder tBorder = borders.addNewTop();
+        tBorder.setVal(BORDER_NONE);
+    }
+
+    /**
+     * 表格获取边框设置
+     *
+     * @param table table
+     * @return CTBorder
+     */
+
+    public static CTTblBorders tableGetBorder(XWPFTable table) {
+        return table.getCTTbl().getTblPr().addNewTblBorders();
+    }
+
+    /**
+     * 表格某行某列获取边框设置
+     *
+     * @param table     table
+     * @param rowIndex  行索引
+     * @param cellIndex 列索引
+     * @return CTTcBorders
+     */
+    public static CTTcBorders tableCellGetBorder(XWPFTable table, int rowIndex, int cellIndex) {
+        XWPFTableCell cell = table.getRow(rowIndex).getCell(cellIndex);
+        CTTc ctTc = cell.getCTTc();
+        return ctTc.addNewTcPr().addNewTcBorders();
+    }
 
 
     /**
@@ -82,17 +207,24 @@ public class PoiUtil {
         // 获取或创建页面边距设置
         CTPageMar pageMar = sectPr.isSetPgMar() ? sectPr.getPgMar() : sectPr.addNewPgMar();
 
-        pageMar.setTop(BigInteger.valueOf(topMargins)); // 上边距 1 英寸
-        pageMar.setBottom(BigInteger.valueOf(bottomMargins)); // 下边距 1 英寸
-        pageMar.setLeft(BigInteger.valueOf(leftMargins)); // 左边距 1 英寸
-        pageMar.setRight(BigInteger.valueOf(rightMargins)); // 右边距 1 英寸
+        pageMar.setTop(cmToTwips(topMargins)); // 上边距 1 英寸
+        pageMar.setBottom(cmToTwips(bottomMargins)); // 下边距 1 英寸
+        pageMar.setLeft(cmToTwips(leftMargins)); // 左边距 1 英寸
+        pageMar.setRight(cmToTwips(rightMargins)); // 右边距 1 英寸
     }
 
+    /**
+     * 设置列宽度
+     *
+     * @param table    表格
+     * @param colIndex 列索引
+     * @param width    宽度
+     */
     public static void setCellWidth(XWPFTable table, int colIndex, int width) {
         for (XWPFTableRow row : table.getRows()) {
             XWPFTableCell cell = row.getCell(colIndex);
             cell.setWidthType(TableWidthType.DXA);
-            cell.setWidth(String.valueOf(width * 20));
+            cell.setWidth(toTwips(width).toString());
         }
     }
 
@@ -211,11 +343,6 @@ public class PoiUtil {
     }
 
 
-    public static BigInteger toTwips(int value) {
-        return BigInteger.valueOf(value * 20L);
-    }
-
-
     /**
      * 设置段落字体样式
      *
@@ -290,6 +417,20 @@ public class PoiUtil {
         run.setItalic(italic);
         // 设置下划线
         run.setUnderline(underlinePatterns);
+    }
+
+    public static BigInteger toTwips(int value) {
+        return BigInteger.valueOf(value * 20L);
+    }
+
+    /**
+     * 单位里面转twips
+     *
+     * @param cm 厘米
+     * @return BigInteger
+     */
+    public static BigInteger cmToTwips(double cm) {
+        return BigInteger.valueOf((long) (cm * 28.35 * 20));
     }
 
 }

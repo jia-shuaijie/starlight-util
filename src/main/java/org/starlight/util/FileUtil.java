@@ -1,5 +1,9 @@
 package org.starlight.util;
 
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -13,7 +17,27 @@ import java.util.zip.ZipOutputStream;
  * @author 黑色的小火苗
  */
 public class FileUtil {
+    private final static Logger log = LoggerFactory.getLogger(FileUtil.class);
     private static final int BUFFER_SIZE = 8192; // 将缓冲区大小定义为常量
+
+    public static void writeWord(XWPFDocument document, String filePath) {
+        File file = new File(filePath);
+        FileUtil.createFile(file);
+        ByteArrayOutputStream bao = new ByteArrayOutputStream();
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            document.write(bao);
+            fos.write(bao.toByteArray());
+        } catch (IOException e) {
+            log.error("输出word文件出现错误", e);
+        } finally {
+            try {
+                document.close();
+                bao.close();
+            } catch (IOException e) {
+                log.error("关闭文件流出现异常", e);
+            }
+        }
+    }
 
     /**
      * zip解压
@@ -189,11 +213,40 @@ public class FileUtil {
         File file = new File(dir);
         File parentFile = file.getParentFile();
         if (!parentFile.exists()) {
-            parentFile.mkdir();
+            parentFile.mkdirs();
         }
         if (file.exists()) {
             return;
         }
         file.mkdirs();
+    }
+
+    /**
+     * 根据文件路径创建文件
+     *
+     * @param file file
+     */
+    public static void createFile(File file) {
+        if (file.exists()) {
+            return;
+        }
+        if (file.isDirectory()) {
+            createDirectory(file.getAbsolutePath());
+            return;
+        }
+        if (file.getParentFile().exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                log.error("创建文件失败!", e);
+            }
+            return;
+        }
+        createDirectory(file.getParent());
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            log.error("创建文件失败!", e);
+        }
     }
 }
