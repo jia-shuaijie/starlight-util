@@ -19,7 +19,6 @@ import java.lang.reflect.Type;
 public class JacksonUtil {
     public static ObjectMapper om = ObjectMapperUtil.om;
 
-
     /**
      * Object to json string.
      *
@@ -33,6 +32,23 @@ public class JacksonUtil {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Object to json byte array.
+     * <p>
+     * 将对象输出为byte array
+     *
+     * @param o object 缓存对象
+     * @return byte[]
+     */
+    public static byte[] toBytes(Object o) {
+        try {
+            return om.writeValueAsBytes(o);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Json string deserialize to Object.
      *
@@ -96,6 +112,7 @@ public class JacksonUtil {
             throw new RuntimeException(e);
         }
     }
+
     /**
      * Json string deserialize to Object.
      *
@@ -119,7 +136,6 @@ public class JacksonUtil {
      * @param type {@link Type} of object
      * @param <T>  General type
      * @return object
-
      */
     public static <T> T toObj(String json, Type type) {
         try {
@@ -136,7 +152,6 @@ public class JacksonUtil {
      * @param typeReference {@link TypeReference} of object
      * @param <T>           General type
      * @return object
-
      */
     public static <T> T toObj(String json, TypeReference<T> typeReference) {
         try {
@@ -153,7 +168,6 @@ public class JacksonUtil {
      * @param type        {@link Type} of object
      * @param <T>         General type
      * @return object
-
      */
     public static <T> T toObj(InputStream inputStream, Type type) {
         try {
