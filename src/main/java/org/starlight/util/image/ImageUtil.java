@@ -5,9 +5,12 @@ import net.coobird.thumbnailator.Thumbnails;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * 图片处理工具类
@@ -50,7 +53,7 @@ public class ImageUtil {
         }
     }
 
-    public static void setG2d(AbstractGraphics graphics, Graphics2D g2d) {
+    private static void setG2d(AbstractGraphics graphics, Graphics2D g2d) {
         g2d.setColor(graphics.getColor());
         switch (graphics.getType()) {
             case TEXT:
@@ -89,5 +92,85 @@ public class ImageUtil {
                 break;
         }
     }
+
+    /**
+     * 图片Url转Byte[]
+     * @param imageUrl 网络图片地址
+     * @return byte[]
+     */
+    public static byte[] imageUrlToBinaryData(String imageUrl) {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        try {
+            URL url = new URL(imageUrl);
+            try (InputStream is = url.openStream()) {
+                int nRead;
+                byte[] data = new byte[16384];
+                while ((nRead = is.read(data, 0, data.length)) != -1) {
+                    buffer.write(data, 0, nRead);
+                }
+                buffer.flush();
+            } catch (IOException e) {
+                throw new RuntimeException("图片Url转换Byte[]失败!");
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        return buffer.toByteArray();
+
+    }
+
+    /**
+     * 图片路径转换为byte[]
+     * @param imagePath 图片路径
+     * @return byte[]
+     */
+    public static byte[] imageToBinaryData(String imagePath) {
+        // 输入校验
+        if (imagePath == null || imagePath.isEmpty()) {
+            throw new IllegalArgumentException("图片路径不能为空!");
+        }
+
+        File file = new File(imagePath);
+        if (!file.exists() || !file.isFile()) {
+            throw new IllegalArgumentException("指定路径的文件不存在或不是一个有效的文件: " + imagePath);
+        }
+
+        try {
+            // 读取图片文件
+            BufferedImage bufferedImage = ImageIO.read(file);
+            if (bufferedImage == null) {
+                throw new IOException("无法读取图片文件: " + imagePath);
+            }
+
+            // 动态获取图片格式
+            String formatName = getImageFormat(file);
+            if (formatName == null || formatName.isEmpty()) {
+                throw new IOException("无法识别图片格式: " + imagePath);
+            }
+
+            // 使用 try-with-resources 确保 ByteArrayOutputStream 正确关闭
+            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+                // 将图片写入流
+                ImageIO.write(bufferedImage, formatName, byteArrayOutputStream);
+                return byteArrayOutputStream.toByteArray();
+            }
+        } catch (IOException e) {
+            // 增强异常处理，保留原始异常信息
+            throw new RuntimeException("图片文件转换Byte[]失败! 路径: " + imagePath, e);
+        }
+    }
+
+    /**
+     * 动态获取图片格式
+     */
+    private static String getImageFormat(File file) {
+        String name = file.getName();
+        int dotIndex = name.lastIndexOf('.');
+        if (dotIndex > 0 && dotIndex < name.length() - 1) {
+            return name.substring(dotIndex + 1).toLowerCase();
+        }
+        return null;
+    }
+
 
 }
