@@ -11,11 +11,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Base64;
 
 /**
  * 图片处理工具类
  *
- * @author: 黑色的小火苗
+ * @author 黑色的小火苗
  */
 public class ImageUtil {
 
@@ -94,11 +95,23 @@ public class ImageUtil {
     }
 
     /**
+     * 图片Url转 byte[] 转 Base64
+     *
+     * @param imageUrl 图片URl
+     * @return Base64
+     */
+    public static String imageUrlToBase64Data(String imageUrl) {
+        byte[] bytes = imageUrlToByteArray(imageUrl);
+        return Base64.getEncoder().encodeToString(bytes);
+    }
+
+    /**
      * 图片Url转Byte[]
+     *
      * @param imageUrl 网络图片地址
      * @return byte[]
      */
-    public static byte[] imageUrlToBinaryData(String imageUrl) {
+    public static byte[] imageUrlToByteArray(String imageUrl) {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try {
             URL url = new URL(imageUrl);
@@ -121,6 +134,7 @@ public class ImageUtil {
 
     /**
      * 图片路径转换为byte[]
+     *
      * @param imagePath 图片路径
      * @return byte[]
      */
