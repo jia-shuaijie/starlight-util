@@ -14,6 +14,10 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 
+
+/**
+ * @author br.vst
+ */
 public class PoiUtil {
     public static STBorder.Enum BORDER_NONE = STBorder.NONE;
 

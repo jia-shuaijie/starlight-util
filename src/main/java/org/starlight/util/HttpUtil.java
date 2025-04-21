@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * @author 黑色的小火苗
+ * @author br.vst
  */
 
 public class HttpUtil {

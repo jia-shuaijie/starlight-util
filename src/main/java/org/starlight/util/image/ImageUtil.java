@@ -16,7 +16,7 @@ import java.util.Base64;
 /**
  * 图片处理工具类
  *
- * @author 黑色的小火苗
+ * @author br.vst
  */
 public class ImageUtil {
 

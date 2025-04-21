@@ -19,7 +19,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * @author 黑色的小火苗
+ * @author br.vst
  */
 public class ObjectMapperUtil {
     public static ObjectMapper om;

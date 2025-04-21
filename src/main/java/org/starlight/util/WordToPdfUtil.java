@@ -3,9 +3,9 @@ package org.starlight.util;
 import java.io.File;
 import java.io.IOException;
 
+
 /**
- * @author huangyong
- * @data 2025/4/9
+ * @author br.vst
  */
 public class WordToPdfUtil {
     private static void convertWordToPdf(String libreOfficePath, String wordFilePath, String pdfFilePath) throws InterruptedException, IOException {

@@ -1,7 +1,7 @@
 package org.starlight.util;
 
 /**
- * @author 黑色的小火苗
+ * @author br.vst
  */
 public class NumberUtil {
     /**

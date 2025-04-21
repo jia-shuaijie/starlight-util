@@ -3,7 +3,7 @@ package org.starlight.util.enums;
 import java.time.format.DateTimeFormatter;
 
 /**
- * @author 黑色的小火苗
+ * @author br.vst
  */
 
 public enum DateFormatEnum {

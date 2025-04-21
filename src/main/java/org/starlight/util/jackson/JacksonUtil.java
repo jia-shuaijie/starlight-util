@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
 /**
  * jackson json格式化工具类
  *
- * @author 黑色的小火苗
+ * @author br.vst
  */
 public class JacksonUtil {
     public static ObjectMapper om = ObjectMapperUtil.om;

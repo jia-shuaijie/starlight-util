@@ -4,7 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
- * @author 黑色的小火苗
+ * @author br.vst
  */
 public class StringUtils {
     /**

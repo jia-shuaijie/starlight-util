@@ -1,9 +1,5 @@
 package org.starlight.util.enums;
 
-/**
- * @author 黑色的小火苗
- */
-
 public enum GraphicsType {
     /**
      * 文本类型

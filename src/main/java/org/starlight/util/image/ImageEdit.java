@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * 图片编辑参数
  *
- * @author 黑色的小火苗
+ * @author br.vst
  */
 public class ImageEdit {
     /**

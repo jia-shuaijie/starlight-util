@@ -14,7 +14,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 /**
- * @author 黑色的小火苗
+ * @author br.vst
  */
 public class FileUtil {
     private final static Logger log = LoggerFactory.getLogger(FileUtil.class);

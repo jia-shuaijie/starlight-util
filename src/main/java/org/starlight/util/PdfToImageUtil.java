@@ -8,9 +8,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+
 /**
- * @author huangyong
- * @data 2025/4/9
+ * @author br.vst
  */
 public class PdfToImageUtil {
 

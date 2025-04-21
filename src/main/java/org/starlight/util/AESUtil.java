@@ -6,7 +6,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
 /**
- * @author 黑色的小火苗
+ * @author br.vst
  */
 public class AESUtil {
 

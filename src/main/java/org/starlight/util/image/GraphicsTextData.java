@@ -5,7 +5,7 @@ import org.starlight.util.enums.GraphicsType;
 import java.awt.*;
 
 /**
- * @author 黑色的小火苗
+ * @author br.vst
  */
 public class GraphicsTextData extends AbstractGraphics {
 
