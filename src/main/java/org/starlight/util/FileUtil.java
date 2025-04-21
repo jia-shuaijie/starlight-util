@@ -18,7 +18,8 @@ import java.util.zip.ZipOutputStream;
  */
 public class FileUtil {
     private final static Logger log = LoggerFactory.getLogger(FileUtil.class);
-    private static final int BUFFER_SIZE = 8192; // 将缓冲区大小定义为常量
+    // 将缓冲区大小定义为常量
+    private static final int BUFFER_SIZE = 8192;
 
     public static void writeWord(XWPFDocument document, String filePath) {
         File file = new File(filePath);
@@ -42,33 +43,32 @@ public class FileUtil {
     /**
      * zip解压
      *
-     * @param srcFile     zip源文件
-     * @param destDirPath 解压后的目标文件夹
+     * @param srcFile       zip源文件
+     * @param unpackDirPath 解压后的目标文件夹
      * @throws RuntimeException 解压失败会抛出运行时异常
      */
-    public static void unZip(File srcFile, String destDirPath, Charset charset) {
+    public static void unZip(File srcFile, String unpackDirPath, Charset charset) {
         try (ZipFile zipFile = new ZipFile(srcFile, charset)) {
             Enumeration<?> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = (ZipEntry) entries.nextElement();
                 if (entry.isDirectory()) {
-                    createDirectory(destDirPath + File.separator + entry.getName());
+                    createDirectory(unpackDirPath + File.separator + entry.getName());
                     continue;
                 }
-                createFile(destDirPath, entry, zipFile);
+                createFile(unpackDirPath, entry, zipFile);
             }
         } catch (IOException ex) {
             throw new RuntimeException("unzip error from ZipUtils", ex);
         }
     }
 
-    private static void createFile(String destDirPath, ZipEntry entry, ZipFile zipFile) throws IOException {
-        File targetFile = new File(destDirPath + "/" + entry.getName());
+    private static void createFile(String unpackDirPath, ZipEntry entry, ZipFile zipFile) throws IOException {
+        File targetFile = new File(unpackDirPath + "/" + entry.getName());
         if (!targetFile.getParentFile().exists()) {
-            targetFile.getParentFile().mkdirs();
+            log.info("压缩包父级目录不存在,创建父级压缩包目录: {}", targetFile.getParentFile().mkdirs());
         }
-        targetFile.createNewFile();
-
+        log.info("创建压缩包目录: {}", targetFile.createNewFile());
         try (InputStream is = zipFile.getInputStream(entry);
              FileOutputStream fos = new FileOutputStream(targetFile)) {
             byte[] buf = new byte[BUFFER_SIZE];
@@ -132,7 +132,7 @@ public class FileUtil {
     public static void deleteDirectory(File file) {
         List<File> files = readFilePath(file);
         deleteFile(files.stream().map(File::getAbsolutePath).collect(Collectors.toList()));
-        file.delete();
+        log.info("移除文件: {}", file.delete());
     }
 
     /**
@@ -185,9 +185,11 @@ public class FileUtil {
      * @param ins        输入流
      */
     public static void toFile(File targetFile, InputStream ins) {
-        try (OutputStream os = Files.newOutputStream(targetFile.toPath())) { // 使用try-with-resources
+        // 使用try-with-resources
+        try (OutputStream os = Files.newOutputStream(targetFile.toPath())) {
             int bytesRead;
-            byte[] buffer = new byte[BUFFER_SIZE]; // 使用常量定义缓冲区大小
+            // 使用常量定义缓冲区大小
+            byte[] buffer = new byte[BUFFER_SIZE];
             while ((bytesRead = ins.read(buffer, 0, BUFFER_SIZE)) != -1) {
                 os.write(buffer, 0, bytesRead);
             }
@@ -213,12 +215,12 @@ public class FileUtil {
         File file = new File(dir);
         File parentFile = file.getParentFile();
         if (!parentFile.exists()) {
-            parentFile.mkdirs();
+            log.info("创建父级目录: {}", parentFile.mkdirs());
         }
         if (file.exists()) {
             return;
         }
-        file.mkdirs();
+        log.info("创建目录: {}", file.mkdirs());
     }
 
     /**
@@ -236,7 +238,7 @@ public class FileUtil {
         }
         if (file.getParentFile().exists()) {
             try {
-                file.createNewFile();
+                log.info("父级目录已存在, 创建文件: {}", file.createNewFile());
             } catch (IOException e) {
                 log.error("创建文件失败!", e);
             }
@@ -244,7 +246,8 @@ public class FileUtil {
         }
         createDirectory(file.getParent());
         try {
-            file.createNewFile();
+            log.info("创建文件: {}", file.createNewFile());
+            boolean newFile = file.createNewFile();
         } catch (IOException e) {
             log.error("创建文件失败!", e);
         }

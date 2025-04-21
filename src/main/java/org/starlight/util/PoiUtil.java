@@ -24,7 +24,7 @@ public class PoiUtil {
     /**
      * 整体表格设置文本居中
      *
-     * @param table
+     * @param table table
      */
     public static void tableSetTextCenter(XWPFTable table) {
         // 遍历表格中的每个单元格并设置文本居中
@@ -32,7 +32,9 @@ public class PoiUtil {
             for (XWPFTableCell cell : row.getTableCells()) {
                 // 创建段落
                 List<XWPFParagraph> paragraphs = cell.getParagraphs();
-                XWPFParagraph paragraph = paragraphs.isEmpty() || paragraphs.get(0) == null ? cell.addParagraph() : paragraphs.get(0);
+                XWPFParagraph paragraph = paragraphs.isEmpty() || paragraphs.get(0) == null
+                        ? cell.addParagraph()
+                        : paragraphs.get(0);
                 // 设置段落对齐方式为水平居中
                 paragraph.setAlignment(ParagraphAlignment.CENTER);
                 // 设置单元格对齐方式为垂直居中
@@ -66,16 +68,16 @@ public class PoiUtil {
         removeBottomBorders(borders);
         removeLeftBorders(borders);
         removeRightBorders(borders);
-        removeHBorders(borders);
-        removeVBorders(borders);
+        removeBordersH(borders);
+        removeBordersV(borders);
 
     }
 
-    public static void removeHBorders(CTTblBorders borders) {
+    public static void removeBordersH(CTTblBorders borders) {
         borders.addNewInsideH().setVal(BORDER_NONE);
     }
 
-    public static void removeVBorders(CTTblBorders borders) {
+    public static void removeBordersV(CTTblBorders borders) {
         borders.addNewInsideV().setVal(BORDER_NONE);
     }
 
@@ -211,10 +213,14 @@ public class PoiUtil {
         // 获取或创建页面边距设置
         CTPageMar pageMar = sectPr.isSetPgMar() ? sectPr.getPgMar() : sectPr.addNewPgMar();
 
-        pageMar.setTop(cmToTwips(topMargins)); // 上边距 1 英寸
-        pageMar.setBottom(cmToTwips(bottomMargins)); // 下边距 1 英寸
-        pageMar.setLeft(cmToTwips(leftMargins)); // 左边距 1 英寸
-        pageMar.setRight(cmToTwips(rightMargins)); // 右边距 1 英寸
+        // 上边距 1 英寸
+        pageMar.setTop(cmToTwips(topMargins));
+        // 下边距 1 英寸
+        pageMar.setBottom(cmToTwips(bottomMargins));
+        // 左边距 1 英寸
+        pageMar.setLeft(cmToTwips(leftMargins));
+        // 右边距 1 英寸
+        pageMar.setRight(cmToTwips(rightMargins));
     }
 
     /**
@@ -237,13 +243,13 @@ public class PoiUtil {
      * <p>
      * 跨列合并，横着合并 , 都是下标值
      *
-     * @param rowindex 要合并哪一行的列
+     * @param rowIndex 要合并哪一行的列
      * @param fromCell 从哪列开始合并（下标）
      * @param endCell  合并到哪列结束（下标）
      */
-    public static void mergeCellsHorizontally(XWPFTable table, int rowindex, int fromCell, int endCell) {
+    public static void mergeCellsHorizontally(XWPFTable table, int rowIndex, int fromCell, int endCell) {
         for (int cellIndex = fromCell; cellIndex <= endCell; cellIndex++) {
-            CTTc ctTc = table.getRow(rowindex).getCell(cellIndex).getCTTc();
+            CTTc ctTc = table.getRow(rowIndex).getCell(cellIndex).getCTTc();
             CTTcPr ctTcPr = ctTc.isSetTcPr() ? ctTc.getTcPr() : ctTc.addNewTcPr();
             CTHMerge hMerge = ctTcPr.isSetHMerge() ? ctTcPr.getHMerge() : ctTcPr.addNewHMerge();
             hMerge.setVal(cellIndex == fromCell ? STMerge.RESTART : STMerge.CONTINUE);
@@ -287,15 +293,17 @@ public class PoiUtil {
      * @param height    int 图片高度（单位：像素）
      * @throws IOException 如果读取图片文件时发生错误
      */
-    public static void insertImage(XWPFParagraph paragraph, String imagePath, int width, int height) throws IOException, InvalidFormatException {
+    public static void insertImage(XWPFParagraph paragraph, String imagePath, int width, int height)
+            throws IOException, InvalidFormatException {
         // 读取图片文件
         byte[] pictureData = IOUtils.toByteArray(Files.newInputStream(Paths.get(imagePath)));
-        paragraph.setAlignment(ParagraphAlignment.CENTER); // 设置段落居中对齐
+        // 设置段落居中对齐
+        paragraph.setAlignment(ParagraphAlignment.CENTER);
         // 创建运行对象
         XWPFRun run = paragraph.createRun();
 
-        // 插入图片
-        int format = XWPFDocument.PICTURE_TYPE_PNG; // 假设图片是 PNG 格式
+        // 插入图片  // 假设图片是 PNG 格式
+        int format = XWPFDocument.PICTURE_TYPE_PNG;
         if (imagePath.toLowerCase().endsWith(".jpg") || imagePath.toLowerCase().endsWith(".jpeg")) {
             format = XWPFDocument.PICTURE_TYPE_JPEG;
         } else if (imagePath.toLowerCase().endsWith(".gif")) {
@@ -303,7 +311,8 @@ public class PoiUtil {
         } else if (imagePath.toLowerCase().endsWith(".bmp")) {
             format = XWPFDocument.PICTURE_TYPE_BMP;
         }
-        run.addPicture(new ByteArrayInputStream(pictureData), format, imagePath, Units.toEMU(width), Units.toEMU(height));
+        run.addPicture(new ByteArrayInputStream(pictureData),
+                format, imagePath, Units.toEMU(width), Units.toEMU(height));
     }
 
     /**
@@ -318,7 +327,8 @@ public class PoiUtil {
             ppr = paragraph.getCTP().addNewPPr();
         }
         CTSpacing spacing = ppr.isSetSpacing() ? ppr.getSpacing() : ppr.addNewSpacing();
-        spacing.setLine(BigInteger.valueOf(lineSpacingValue)); // 单位转换
+        // 单位转换
+        spacing.setLine(BigInteger.valueOf(lineSpacingValue));
     }
 
     /**
@@ -328,7 +338,8 @@ public class PoiUtil {
      * @param beforeSpace int 段前间距（单位：磅）
      * @param afterSpace  int 段后间距（单位：磅）
      */
-    public static void setParagraphSpacing(XWPFParagraph paragraph, int beforeSpace, int afterSpace, int leftIndent, int rightIndent) {
+    public static void setParagraphSpacing(XWPFParagraph paragraph, int beforeSpace, int afterSpace,
+                                           int leftIndent, int rightIndent) {
 
         // 获取段落的属性
         CTPPr pPr = paragraph.getCTP().getPPr();
@@ -337,13 +348,17 @@ public class PoiUtil {
         }
         // 设置段前间距
         CTSpacing spacing = pPr.isSetSpacing() ? pPr.getSpacing() : pPr.addNewSpacing();
-        spacing.setBefore(toTwips(beforeSpace)); // 单位转换为 Twips
-        spacing.setAfter(toTwips(afterSpace));   // 单位转换为 Twips
+        // 单位转换为 Twips
+        spacing.setBefore(toTwips(beforeSpace));
+        // 单位转换为 Twips
+        spacing.setAfter(toTwips(afterSpace));
         // 获取或创建缩进对象
         CTInd ind = pPr.isSetInd() ? pPr.getInd() : pPr.addNewInd();
 
-        ind.setLeft(toTwips(leftIndent));  // 设置左缩进，单位转换为 Twips
-        ind.setRight(toTwips(rightIndent)); // 设置右缩进，单位转换为 Twips
+        // 设置左缩进，单位转换为 Twips
+        ind.setLeft(toTwips(leftIndent));
+        // 设置右缩进，单位转换为 Twips
+        ind.setRight(toTwips(rightIndent));
     }
 
 
@@ -357,7 +372,9 @@ public class PoiUtil {
      * @param fontColor         String 字体颜色
      * @param bold              boolean 是否加粗
      * @param italic            boolean 是否斜体
-     * @param underlinePatterns UnderlinePatterns 设置下划线 UnderlinePatterns.NONE 表示不添加下划线 UnderlinePatterns.SINGLE 下划线
+     * @param underlinePatterns UnderlinePatterns 设置下划线
+     *                          UnderlinePatterns.NONE 表示不添加下划线
+     *                          UnderlinePatterns.SINGLE 下划线
      */
     public static void setFont(XWPFParagraph paragraph, String content,
                                String fontFamily, int fontSize, String fontColor,
@@ -378,10 +395,12 @@ public class PoiUtil {
      * @param fontColor         String 字体颜色
      * @param bold              boolean 是否加粗
      * @param italic            boolean 是否斜体
-     * @param underlinePatterns UnderlinePatterns 设置下划线 UnderlinePatterns.NONE 表示不添加下划线 UnderlinePatterns.SINGLE 下划线
+     * @param underlinePatterns UnderlinePatterns 设置下划线
+     *                          UnderlinePatterns.NONE 表示不添加下划线
+     *                          UnderlinePatterns.SINGLE 下划线
      */
-    public static void setFont(XWPFParagraph paragraph, List<String> contents, String fontFamily, int fontSize,
-                               String fontColor, boolean bold, boolean italic,
+    public static void setFont(XWPFParagraph paragraph, List<String> contents, String fontFamily,
+                               int fontSize, String fontColor, boolean bold, boolean italic,
                                UnderlinePatterns underlinePatterns) {
         XWPFRun run = paragraph.createRun();
         // 获取迭代器
@@ -404,7 +423,9 @@ public class PoiUtil {
      * @param fontColor         String 字体颜色
      * @param bold              boolean 是否加粗
      * @param italic            boolean 是否斜体
-     * @param underlinePatterns UnderlinePatterns 设置下划线 UnderlinePatterns.NONE 表示不添加下划线 UnderlinePatterns.SINGLE 下划线
+     * @param underlinePatterns UnderlinePatterns 设置下划线
+     *                          UnderlinePatterns.NONE 表示不添加下划线
+     *                          UnderlinePatterns.SINGLE 下划线
      */
     public static void setFontStyle(XWPFRun run, String fontFamily, int fontSize, String fontColor,
                                     boolean bold, boolean italic,

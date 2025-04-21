@@ -132,19 +132,14 @@ public class HttpUtil {
      * @return String结果
      */
     private static String execute(Request request) {
-        Response response;
-        try {
-            response = CLIENT.newCall(request).execute();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        if (!response.isSuccessful() || response.body() == null) {
-            return "";
-        }
-        try {
+        Call call = CLIENT.newCall(request);
+        try (Response response = call.execute()) {
+            if (!response.isSuccessful() || response.body() == null) {
+                return "";
+            }
             return response.body().string();
         } catch (IOException e) {
-            return "";
+            throw new RuntimeException(e);
         }
     }
 
