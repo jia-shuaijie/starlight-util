@@ -16,9 +16,29 @@ public class NumberUtil {
         }
         if (target instanceof Double || target instanceof Float) {
             double value = target.doubleValue();
-            return Math.abs(value) < 1e-10; // 小于一个很小的阈值
+            // 小于一个很小的阈值
+            return Math.abs(value) < 1e-10;
         }
         return target.intValue() == 0;
     }
 
+    /**
+     * 数字转中文小写数字
+     *
+     * @param intParam 数字,不可以使用小数
+     * @return 中文数字字符串 示例: 2023 => 二〇二三
+     */
+    public static String numberToChinese(Number intParam) {
+        String[] chineseNumbers = {"〇", "一", "二", "三", "四", "五", "六", "七", "八", "九"};
+        char[] chars = String.valueOf(intParam).toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for (char c : chars) {
+            if (c == '.') {
+                sb.append("点");
+                continue;
+            }
+            sb.append(chineseNumbers[Integer.parseInt(String.valueOf(c))]);
+        }
+        return sb.toString();
+    }
 }
